@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AppKEA4PermisoCamara</string>
+    <string name="valbtntomarfoto">TOMAR FOTO</string>
+    <string name="valbtncompartir">COMPARTIR FOTO</string>
 </resources>
