@@ -2,17 +2,26 @@ package com.qbo.appkea4permisocamara
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.qbo.appkea4permisocamara.databinding.ActivityMainBinding
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.jvm.Throws
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var  binding: ActivityMainBinding
+    private var rutaFotoActual = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +37,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Throws(IOException::class)
+    fun crearArchivoTemporal() : File? {
+        val fechaHora = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val nombreImagen = "JPEG_${fechaHora}_"
+        val directorio: File = this?.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
+        val imagen: File = File.createTempFile(nombreImagen,".jpg", directorio)
+        rutaFotoActual = imagen.absolutePath
+        return imagen
+    }
+
+    @Throws(IOException::class)
     fun llamarAppCamara(){
         val fotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if(fotoIntent.resolveActivity(packageManager) != null ){
-            startActivityForResult(fotoIntent, 1)
+            val archivoFoto = crearArchivoTemporal()
+            if(archivoFoto != null){
+                val urlFoto: Uri = FileProvider.getUriForFile(
+                    applicationContext,
+                    "com.qbo.appkea4permisocamara.provider",
+                    archivoFoto
+                )
+                fotoIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                    urlFoto)
+                startActivityForResult(fotoIntent, 1)
+            }
+
         }
     }
 
