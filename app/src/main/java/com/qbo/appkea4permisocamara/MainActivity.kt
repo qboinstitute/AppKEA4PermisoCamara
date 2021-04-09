@@ -1,8 +1,10 @@
 package com.qbo.appkea4permisocamara
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,11 +21,20 @@ class MainActivity : AppCompatActivity() {
         binding.btntomarfoto.setOnClickListener {
             if(permisoEscrituraAlmacenamiento()){
                 //Llamar a la cámara
+                llamarAppCamara()
             }else{
                 solicitarPermiso()
             }
         }
     }
+
+    fun llamarAppCamara(){
+        val fotoIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if(fotoIntent.resolveActivity(packageManager) != null ){
+            startActivityForResult(fotoIntent, 1)
+        }
+    }
+
     fun permisoEscrituraAlmacenamiento(): Boolean{
         val resultado = ContextCompat.checkSelfPermission(
             applicationContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -49,6 +60,7 @@ class MainActivity : AppCompatActivity() {
             if(grantResults.isNotEmpty() && grantResults[0]
                 == PackageManager.PERMISSION_GRANTED){
                 //Llamar a la cámara
+                llamarAppCamara()
             }else{
                 enviarMensaje("Permiso denegado, la aplicación no puede tomar fotos")
             }
