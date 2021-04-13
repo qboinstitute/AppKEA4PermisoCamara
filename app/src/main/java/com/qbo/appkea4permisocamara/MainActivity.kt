@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
         }else{
             binding.ivfoto.rotation = 0.0F
         }
+        //Obteniendo la MetaData de la imagen.
+        //val fecha = exitInterface.getAttribute(ExifInterface.TAG_DATETIME)
         val anchoImageView = binding.ivfoto.width
         val altoImageView = binding.ivfoto.height
         val bmOpciones = BitmapFactory.Options()
